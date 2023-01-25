@@ -6,6 +6,7 @@ var btn_export = document.getElementById("btn_export");
 var input_width = document.getElementById("input_width");
 var input_height = document.getElementById("input_height");
 var input_idx = document.getElementById("input_idx");
+var input_smooth = document.getElementById("input_smooth");
 
 var width = input_width.value
 var height = input_height.value
@@ -18,7 +19,14 @@ var imgs = {};
 var ctxs = {};
 var cnvs = {};
 
-
+// SMOOTH ON OFF
+input_smooth.addEventListener("change", () => {
+  for (const key in cnvs) {
+    if (cnvs.hasOwnProperty(key)) {
+      redraw(imgs[key], ctxs[key], width, height);
+    }
+  }
+})
 
 // CHANGE CANVAS SIZE
 input_width.addEventListener("change", () => {
@@ -111,11 +119,11 @@ function downloadImage(data, filename = 'untitled.jpeg') {
 }
 
 function set2pixelated(ctx) {
-  ctx.mozImageSmoothingEnabled = false;
-  ctx.oImageSmoothingEnabled = false;
-  ctx.webkitImageSmoothingEnabled = false;
-  ctx.msImageSmoothingEnabled = false;
-  ctx.imageSmoothingEnabled = false;
+  ctx.mozImageSmoothingEnabled = input_smooth.checked;
+  ctx.oImageSmoothingEnabled = input_smooth.checked;
+  ctx.webkitImageSmoothingEnabled = input_smooth.checked;
+  ctx.msImageSmoothingEnabled = input_smooth.checked;
+  ctx.imageSmoothingEnabled = input_smooth.checked;
 }
 
 window.onload = async function() {
