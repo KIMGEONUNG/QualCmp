@@ -3,6 +3,13 @@ var pane = document.getElementById("pane");
 var btn_next = document.getElementById("btn_next");
 var btn_previous = document.getElementById("btn_previous");
 var btn_export = document.getElementById("btn_export");
+var input_width = document.getElementById("input_width");
+var input_height = document.getElementById("input_height");
+var input_idx = document.getElementById("input_idx");
+var input_smooth = document.getElementById("input_smooth");
+
+var width = input_width.value
+var height = input_height.value
 
 var idx = 0;
 var size = 500;
@@ -12,28 +19,86 @@ var imgs = {};
 var ctxs = {};
 var cnvs = {};
 
-event_move = (logic) => {
-  return () => {
-    idx = logic(idx)
+// SMOOTH ON OFF
+input_smooth.addEventListener("change", () => {
+  for (const key in cnvs) {
+    if (cnvs.hasOwnProperty(key)) {
+      redraw(imgs[key], ctxs[key], width, height);
+    }
+  }
+})
 
-    for (const key in config_obj) {
-      if (config_obj.hasOwnProperty(key)) {
-        const element = config_obj[key][idx];
-        // ADD IMAGE
-        let canvas = document.getElementById(key)
-        let ctx = canvas.getContext('2d');
-        let img = imgs[key]
-        img.src = element;
-        img.onload = () => {
-          redraw(img, ctx, size, size);
-        }
+// CHANGE CANVAS SIZE
+input_width.addEventListener("change", () => {
+  width = input_width.value;
+  for (const key in cnvs) {
+    if (cnvs.hasOwnProperty(key)) {
+      const cnv = cnvs[key];
+      cnv.width = width
+      let ctx = cnv.getContext('2d');
+      trackTransforms(ctx);
+      redraw(imgs[key], ctxs[key], width, height);
+    }
+  }
+})
+
+input_height.addEventListener("change", () => {
+  height = input_height.value;
+  for (const key in cnvs) {
+    if (cnvs.hasOwnProperty(key)) {
+      const cnv = cnvs[key];
+      cnv.height = height
+      let ctx = cnv.getContext('2d');
+      trackTransforms(ctx);
+      redraw(imgs[key], ctxs[key], width, height);
+    }
+  }
+})
+
+function update_image(idx) {
+  for (const key in config_obj) {
+    if (config_obj.hasOwnProperty(key)) {
+      const element = config_obj[key][idx];
+      // ADD IMAGE
+      let canvas = document.getElementById(key)
+      let ctx = canvas.getContext('2d');
+      let img = imgs[key]
+      img.src = element;
+      img.onload = () => {
+        redraw(img, ctx, width, height);
       }
     }
   }
 }
 
-btn_next.addEventListener("click", event_move((a) => { return Math.min(a + 1, len - 1) }))
-btn_previous.addEventListener("click", event_move((a) => { return Math.max(0, a - 1) }))
+event_move = (logic) => {
+  return () => {
+    idx = logic(idx)
+    input_idx.value = idx
+    update_image(idx)
+  }
+}
+
+// CHANGE INDEX
+input_idx.addEventListener("change", () => {
+  console.log("Out of range");
+  if (input_idx.value > len - 1) {
+    input_idx.value = len - 1;
+  }
+  if (input_idx.value < 0) {
+    input_idx.value = 0;
+  }
+  update_image(input_idx.value);
+})
+btn_next.addEventListener("click", () => {
+  input_idx.value = Math.min(input_idx.value + 1, len - 1)
+  update_image(input_idx.value);
+})
+btn_previous.addEventListener("click", () => {
+  input_idx.value = Math.max(0, input_idx.value - 1);
+  update_image(input_idx.value)
+})
+
 btn_export.addEventListener("click", function() {
   for (const key in config_obj) {
     if (config_obj.hasOwnProperty(key)) {
@@ -54,11 +119,11 @@ function downloadImage(data, filename = 'untitled.jpeg') {
 }
 
 function set2pixelated(ctx) {
-  ctx.mozImageSmoothingEnabled = false;
-  ctx.oImageSmoothingEnabled = false;
-  ctx.webkitImageSmoothingEnabled = false;
-  ctx.msImageSmoothingEnabled = false;
-  ctx.imageSmoothingEnabled = false;
+  ctx.mozImageSmoothingEnabled = input_smooth.checked;
+  ctx.oImageSmoothingEnabled = input_smooth.checked;
+  ctx.webkitImageSmoothingEnabled = input_smooth.checked;
+  ctx.msImageSmoothingEnabled = input_smooth.checked;
+  ctx.imageSmoothingEnabled = input_smooth.checked;
 }
 
 window.onload = async function() {
@@ -73,6 +138,7 @@ window.onload = async function() {
 
       // CREATE CANVAS
       let div = document.createElement('div');
+      div.style.margin = "8px"
       let label = document.createElement('p');
       label.textContent = key
       let canvas = document.createElement('canvas');
@@ -82,8 +148,8 @@ window.onload = async function() {
       cnvs[key] = canvas;
       trackTransforms(ctx);
 
-      canvas.width = size
-      canvas.height = size
+      canvas.width = width
+      canvas.height = height
       canvas.id = key
       div.appendChild(canvas)
       div.appendChild(label)
@@ -94,7 +160,7 @@ window.onload = async function() {
       imgs[key] = img
       img.src = element[idx];
       img.onload = () => {
-        redraw(img, ctx, size, size);
+        redraw(img, ctx, width, height);
       }
 
       // ENROLL EVENT
@@ -117,7 +183,7 @@ window.onload = async function() {
             if (config.hasOwnProperty(key)) {
               var pt = ctxs[key].transformedPoint(lastX, lastY);
               ctxs[key].translate(pt.x - dragStart.x, pt.y - dragStart.y);
-              redraw(imgs[key], ctxs[key], size, size);
+              redraw(imgs[key], ctxs[key], width, height);
             }
           }
         }
@@ -138,7 +204,7 @@ window.onload = async function() {
             ctxs[key].translate(pt.x, pt.y);
             ctxs[key].scale(factor, factor);
             ctxs[key].translate(-pt.x, -pt.y);
-            redraw(imgs[key], ctxs[key], size, size);
+            redraw(imgs[key], ctxs[key], width, height);
           }
         }
       }

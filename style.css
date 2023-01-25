@@ -18,3 +18,11 @@ img { image-rendering: pixelated; }
 p {
   font-size: 25px;
 }
+
+.mydiv {
+  margin:20px;
+}
+
+.myframe {
+  margin:10px;
+}

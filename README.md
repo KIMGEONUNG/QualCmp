@@ -21,10 +21,6 @@ Qualitative comparisons for multiple results is so tiresome in image restoration
 ## Todo
 
 - Write script which creates config.json 
-- Show current idx
-- Make canvas size editable
-- Make smooth optional
-- Jump to a specific index 
 - Show measures like psnr
 
 <figure>
