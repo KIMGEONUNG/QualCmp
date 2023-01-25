@@ -8,9 +8,6 @@ var input_height = document.getElementById("input_height");
 var input_idx = document.getElementById("input_idx");
 var input_smooth = document.getElementById("input_smooth");
 
-var width = input_width.value
-var height = input_height.value
-
 var idx = 0;
 var size = 500;
 var len = 0;
@@ -23,37 +20,26 @@ var cnvs = {};
 input_smooth.addEventListener("change", () => {
   for (const key in cnvs) {
     if (cnvs.hasOwnProperty(key)) {
-      redraw(imgs[key], ctxs[key], width, height);
+      redraw(imgs[key], ctxs[key], input_width.value, input_height.value);
     }
   }
 })
 
 // CHANGE CANVAS SIZE
-input_width.addEventListener("change", () => {
-  width = input_width.value;
+function update_size() {
   for (const key in cnvs) {
     if (cnvs.hasOwnProperty(key)) {
       const cnv = cnvs[key];
-      cnv.width = width
+      cnv.width = input_width.value
+      cnv.height = input_height.value
       let ctx = cnv.getContext('2d');
       trackTransforms(ctx);
-      redraw(imgs[key], ctxs[key], width, height);
+      redraw(imgs[key], ctxs[key], input_width.value, input_height.value);
     }
   }
-})
-
-input_height.addEventListener("change", () => {
-  height = input_height.value;
-  for (const key in cnvs) {
-    if (cnvs.hasOwnProperty(key)) {
-      const cnv = cnvs[key];
-      cnv.height = height
-      let ctx = cnv.getContext('2d');
-      trackTransforms(ctx);
-      redraw(imgs[key], ctxs[key], width, height);
-    }
-  }
-})
+}
+input_width.addEventListener("change", update_size)
+input_height.addEventListener("change", update_size)
 
 function update_image(idx) {
   for (const key in config_obj) {
@@ -65,7 +51,7 @@ function update_image(idx) {
       let img = imgs[key]
       img.src = element;
       img.onload = () => {
-        redraw(img, ctx, width, height);
+        redraw(img, ctx, input_width.value, input_height.value);
       }
     }
   }
@@ -148,8 +134,8 @@ window.onload = async function() {
       cnvs[key] = canvas;
       trackTransforms(ctx);
 
-      canvas.width = width
-      canvas.height = height
+      canvas.width = input_width.value
+      canvas.height = input_height.value
       canvas.id = key
       div.appendChild(canvas)
       div.appendChild(label)
@@ -160,7 +146,7 @@ window.onload = async function() {
       imgs[key] = img
       img.src = element[idx];
       img.onload = () => {
-        redraw(img, ctx, width, height);
+        redraw(img, ctx, input_width.value, input_height.value);
       }
 
       // ENROLL EVENT
@@ -183,7 +169,7 @@ window.onload = async function() {
             if (config.hasOwnProperty(key)) {
               var pt = ctxs[key].transformedPoint(lastX, lastY);
               ctxs[key].translate(pt.x - dragStart.x, pt.y - dragStart.y);
-              redraw(imgs[key], ctxs[key], width, height);
+              redraw(imgs[key], ctxs[key], input_width.value, input_height.value);
             }
           }
         }
@@ -204,7 +190,7 @@ window.onload = async function() {
             ctxs[key].translate(pt.x, pt.y);
             ctxs[key].scale(factor, factor);
             ctxs[key].translate(-pt.x, -pt.y);
-            redraw(imgs[key], ctxs[key], width, height);
+            redraw(imgs[key], ctxs[key], input_width.value, input_height.value);
           }
         }
       }
