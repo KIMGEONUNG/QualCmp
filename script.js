@@ -20,7 +20,7 @@ var cnvs = {};
 input_smooth.addEventListener("change", () => {
   for (const key in cnvs) {
     if (cnvs.hasOwnProperty(key)) {
-      redraw(imgs[key], ctxs[key], input_width.value, input_height.value);
+      redraw(imgs[key], cnvs[key]);
     }
   }
 })
@@ -34,7 +34,7 @@ function update_size() {
       cnv.height = input_height.value
       let ctx = cnv.getContext('2d');
       trackTransforms(ctx);
-      redraw(imgs[key], ctxs[key], input_width.value, input_height.value);
+      redraw(imgs[key], cnv)
     }
   }
 }
@@ -46,12 +46,11 @@ function update_image(idx) {
     if (config_obj.hasOwnProperty(key)) {
       const element = config_obj[key][idx];
       // ADD IMAGE
-      let canvas = document.getElementById(key)
-      let ctx = canvas.getContext('2d');
+      let canvas = cnvs[key]
       let img = imgs[key]
       img.src = element;
       img.onload = () => {
-        redraw(img, ctx, input_width.value, input_height.value);
+        redraw(img, canvas)
       }
     }
   }
@@ -146,7 +145,7 @@ window.onload = async function() {
       imgs[key] = img
       img.src = element[idx];
       img.onload = () => {
-        redraw(img, ctx, input_width.value, input_height.value);
+        redraw(img, canvas)
       }
 
       // ENROLL EVENT
@@ -169,7 +168,7 @@ window.onload = async function() {
             if (config.hasOwnProperty(key)) {
               var pt = ctxs[key].transformedPoint(lastX, lastY);
               ctxs[key].translate(pt.x - dragStart.x, pt.y - dragStart.y);
-              redraw(imgs[key], ctxs[key], input_width.value, input_height.value);
+              redraw(imgs[key], cnvs[key]);
             }
           }
         }
@@ -190,7 +189,7 @@ window.onload = async function() {
             ctxs[key].translate(pt.x, pt.y);
             ctxs[key].scale(factor, factor);
             ctxs[key].translate(-pt.x, -pt.y);
-            redraw(imgs[key], ctxs[key], input_width.value, input_height.value);
+            redraw(imgs[key], cnvs[key]);
           }
         }
       }
@@ -206,10 +205,11 @@ window.onload = async function() {
   }
 }
 
-function redraw(img, ctx, width, height) {
+function redraw(img, cnv) {
+  var ctx = cnv.getContext('2d')
   set2pixelated(ctx)
   var p1 = ctx.transformedPoint(0, 0);
-  var p2 = ctx.transformedPoint(width, height);
+  var p2 = ctx.transformedPoint(cnv.width, cnv.height);
   ctx.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
   ctx.drawImage(img, 0, 0);
 }
