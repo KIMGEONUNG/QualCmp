@@ -1,0 +1,26 @@
+{
+  "srcs/gt": [
+    "srcs/gt/0.jpg",
+    "srcs/gt/10000.jpg"
+  ],
+  "srcs/n1": [
+    "srcs/n1/0.jpg",
+    "srcs/n1/10000.jpg"
+  ],
+  "srcs/n2": [
+    "srcs/n2/0.jpg",
+    "srcs/n2/10000.jpg"
+  ],
+  "srcs/n3": [
+    "srcs/n3/0.jpg",
+    "srcs/n3/10000.jpg"
+  ],
+  "srcs/n4": [
+    "srcs/n4/0.jpg",
+    "srcs/n4/10000.jpg"
+  ],
+  "srcs/n5": [
+    "srcs/n5/0.jpg",
+    "srcs/n5/10000.jpg"
+  ]
+}

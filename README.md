@@ -22,10 +22,10 @@ Qualitative comparisons for multiple results is so tiresome in image restoration
 
 ### New Features
 
-- Write script which creates config.json 
-- Export with predefined name
-- Show measures like psnr
 - path specified web-server
+- Export with predefined name
+- Write script which creates config.json 
+- Show measures like psnr
 
 
 <figure>
