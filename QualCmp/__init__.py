@@ -1,7 +1,7 @@
 import socketserver
 import http.server
 import os
-from os.path import join, dirname, exists
+from os.path import join, dirname, islink
 from os import symlink, getcwd, chdir
 import argparse
 import json
@@ -46,7 +46,7 @@ def run_qualcmp():
     path_from = join(getcwd(), args.dir)
     path_to = join(dirname(__file__), "web", "srcs")
 
-    if exists(path_to):
+    if islink(path_to):
         os.remove(path_to)
     symlink(path_from, path_to)
 
