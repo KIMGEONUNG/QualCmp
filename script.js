@@ -112,7 +112,7 @@ function set2pixelated(ctx) {
 }
 
 window.onload = async function() {
-  let config = await fetch("srcs/config.json")
+  let config = await fetch("config.json")
     .then(response => response.json());
 
   config_obj = config;
