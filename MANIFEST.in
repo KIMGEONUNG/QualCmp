@@ -1,0 +1,3 @@
+include QualCmp/web/*.js
+include QualCmp/web/*.html
+include QualCmp/web/*.css

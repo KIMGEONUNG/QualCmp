@@ -2,10 +2,40 @@
 
 Qualitative comparisons for multiple results is so tiresome in image restoration domain.
 
+## Install
+
+```sh
+pip install git+https://github.com/KIMGEONUNG/QualCmp
+```
+
 ## Quick Start
 
 ```sh
-./server.py
+QualCmp -d /path/for/images
+```
+
+The directory hierarchy must be like below
+
+```sh
+srcs
+├── gt
+│   ├── 0.jpg
+│   └── 10000.jpg
+├── n1
+│   ├── 0.jpg
+│   └── 10000.jpg
+├── n2
+│   ├── 0.jpg
+│   └── 10000.jpg
+├── n3
+│   ├── 0.jpg
+│   └── 10000.jpg
+├── n4
+│   ├── 0.jpg
+│   └── 10000.jpg
+└── n5
+    ├── 0.jpg
+    └── 10000.jpg
 ```
 
 ## Configuration
@@ -22,7 +52,6 @@ Qualitative comparisons for multiple results is so tiresome in image restoration
 
 ### New Features
 
-- path specified web-server
 - Export with predefined name
 - Write script which creates config.json 
 - Show measures like psnr
