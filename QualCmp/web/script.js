@@ -76,11 +76,11 @@ input_idx.addEventListener("change", () => {
   update_image(input_idx.value);
 })
 btn_next.addEventListener("click", () => {
-  input_idx.value = Math.min(input_idx.value + 1, len - 1)
+  input_idx.value = Math.min(Number(input_idx.value) + 1, len - 1)
   update_image(input_idx.value);
 })
 btn_previous.addEventListener("click", () => {
-  input_idx.value = Math.max(0, input_idx.value - 1);
+  input_idx.value = Math.max(0, Number(input_idx.value) - 1);
   update_image(input_idx.value)
 })
 
