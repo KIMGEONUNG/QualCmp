@@ -14,7 +14,7 @@ pip install git+https://github.com/KIMGEONUNG/QualCmp
 QualCmp -d /path/for/images
 ```
 
-The directory hierarchy must be like below
+The image directory hierarchy must be like below.
 
 ```sh
 srcs
@@ -38,25 +38,14 @@ srcs
     └── 10000.jpg
 ```
 
-## Configuration
+The export path is `$HOME/Downloads`
 
-<span style="color:red">(WIP)</span>
 
 ## Features
 
-- View for multiple type and contents
-- Parallel zoom-in-out and translation
-- Export every image at one time
-
-## Todo
-
-### New Features
-
-- Export with predefined name
-- Write script which creates config.json 
-- Show measures like psnr
-
+- View for multiple type and contents in a way of parallel zoom-in-out and translation
+- Export all images at one time
 
 <figure>
-<img src="srcs/ui_screenshot.gif" alt="fail" style="width:100%">
+<img src="docs/animation.gif" alt="fail" style="width:100%">
 </figure>
