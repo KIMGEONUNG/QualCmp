@@ -85,11 +85,13 @@ btn_previous.addEventListener("click", () => {
 })
 
 btn_export.addEventListener("click", function() {
+  let r = (Math.random() + 1).toString(36).substring(7);
+  let idx = input_idx.value
   for (const key in config_obj) {
     if (config_obj.hasOwnProperty(key)) {
       let cnv = cnvs[key]
       let dataURL = cnv.toDataURL("image/png", 1.0);
-      let path = 'outputs_' + key + ".png"
+      let path = 'zoom_I' + idx + "_" + r + "_" + key + ".png"
       downloadImage(dataURL, path);
     }
   }
