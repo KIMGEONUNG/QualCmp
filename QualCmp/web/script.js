@@ -145,10 +145,6 @@ window.onload = async function() {
       // ADD IMAGE
       let img = new Image;
       imgs[key] = img
-      img.src = element[idx];
-      img.onload = () => {
-        redraw(img, canvas)
-      }
 
       // ENROLL EVENT
       var lastX = canvas.width / 2, lastY = canvas.height / 2;
@@ -205,6 +201,7 @@ window.onload = async function() {
       canvas.addEventListener('mousewheel', handleScroll, false);
     }
   }
+  update_image(idx)
 }
 
 function redraw(img, cnv) {
