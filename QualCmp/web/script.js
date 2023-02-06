@@ -7,6 +7,7 @@ var input_width = document.getElementById("input_width");
 var input_height = document.getElementById("input_height");
 var input_idx = document.getElementById("input_idx");
 var input_smooth = document.getElementById("input_smooth");
+var input_autoresize = document.getElementById("input_autoresize");
 
 var idx = 0;
 var size = 500;
@@ -16,11 +17,23 @@ var imgs = {};
 var ctxs = {};
 var cnvs = {};
 
+var img_w = 0;
+var img_h = 0;
+
 // SMOOTH ON OFF
 input_smooth.addEventListener("change", () => {
   for (const key in cnvs) {
     if (cnvs.hasOwnProperty(key)) {
-      redraw(imgs[key], cnvs[key]);
+      redraw_which(imgs[key], cnvs[key]);
+    }
+  }
+})
+
+// AUTORESIZE ON OFF
+input_autoresize.addEventListener("change", () => {
+  for (const key in cnvs) {
+    if (cnvs.hasOwnProperty(key)) {
+      redraw_which(imgs[key], cnvs[key]);
     }
   }
 })
@@ -34,7 +47,7 @@ function update_size() {
       cnv.height = input_height.value
       let ctx = cnv.getContext('2d');
       trackTransforms(ctx);
-      redraw(imgs[key], cnv)
+      redraw_which(imgs[key], cnv)
     }
   }
 }
@@ -42,6 +55,7 @@ input_width.addEventListener("change", update_size)
 input_height.addEventListener("change", update_size)
 
 function update_image(idx) {
+  let i = 0
   for (const key in config_obj) {
     if (config_obj.hasOwnProperty(key)) {
       const element = config_obj[key][idx];
@@ -50,7 +64,12 @@ function update_image(idx) {
       let img = imgs[key]
       img.src = element;
       img.onload = () => {
-        redraw(img, canvas)
+        if (i == 0) {
+          i = 1
+          img_w = img.width
+          img_h = img.height
+        }
+        redraw_which(img, canvas);
       }
     }
   }
@@ -145,10 +164,6 @@ window.onload = async function() {
       // ADD IMAGE
       let img = new Image;
       imgs[key] = img
-      img.src = element[idx];
-      img.onload = () => {
-        redraw(img, canvas)
-      }
 
       // ENROLL EVENT
       var lastX = canvas.width / 2, lastY = canvas.height / 2;
@@ -170,7 +185,7 @@ window.onload = async function() {
             if (config.hasOwnProperty(key)) {
               var pt = ctxs[key].transformedPoint(lastX, lastY);
               ctxs[key].translate(pt.x - dragStart.x, pt.y - dragStart.y);
-              redraw(imgs[key], cnvs[key]);
+              redraw_which(imgs[key], cnvs[key]);
             }
           }
         }
@@ -191,7 +206,7 @@ window.onload = async function() {
             ctxs[key].translate(pt.x, pt.y);
             ctxs[key].scale(factor, factor);
             ctxs[key].translate(-pt.x, -pt.y);
-            redraw(imgs[key], cnvs[key]);
+            redraw_which(imgs[key], cnvs[key]);
           }
         }
       }
@@ -205,15 +220,25 @@ window.onload = async function() {
       canvas.addEventListener('mousewheel', handleScroll, false);
     }
   }
+  update_image(idx)
 }
 
-function redraw(img, cnv) {
+function redraw_which(img, cnv) {
+  if (input_autoresize.checked) {
+    redraw(img, cnv, img_w, img_h)
+  }
+  else {
+    redraw(img, cnv, img.width, img.height)
+  }
+}
+
+function redraw(img, cnv, w, h) {
   var ctx = cnv.getContext('2d')
   set2pixelated(ctx)
   var p1 = ctx.transformedPoint(0, 0);
   var p2 = ctx.transformedPoint(cnv.width, cnv.height);
   ctx.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
-  ctx.drawImage(img, 0, 0);
+  ctx.drawImage(img, 0, 0, w, h);
 }
 
 function trackTransforms(ctx) {
