@@ -12,12 +12,13 @@ def parse():
     p = argparse.ArgumentParser()
     p.add_argument('-p', '--port', type=int, default=8080)
     p.add_argument('-d', '--dir', type=str, required=True)
+    p.add_argument('--gen_config', action='store_true')
     return p.parse_args()
 
 
-def gen_config():
+def gen_config(path='srcs'):
     a = {}
-    dirs = sorted(glob('srcs/*'))
+    dirs = sorted(glob(join(path, '*')))
     for d in dirs:
         files = sorted(glob(join(d, "*")))
         a[d] = files
@@ -41,6 +42,11 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 def run_qualcmp():
     args = parse()
     port = args.port
+
+    if args.gen_config:
+        print('Create config file on %s' % args.dir)
+        gen_config(args.dir)
+        return 0
 
     # CREATE SYMLINK
     path_from = join(getcwd(), args.dir)
