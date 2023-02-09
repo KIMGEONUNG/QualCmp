@@ -26,8 +26,13 @@ def gen_config(path='srcs'):
         json.dump(a, f, ensure_ascii=False, indent=4)
 
 
-class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+def is_port_in_use(port: int) -> bool:
+    import socket
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(('localhost', port)) == 0
 
+
+class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_my_headers()
         http.server.SimpleHTTPRequestHandler.end_headers(self)
@@ -65,11 +70,19 @@ def run_qualcmp():
     # MAKE CONFIG
     gen_config()
 
+    # CHANGE PORT NUMBER IF USED
+    for _ in range(100):
+        if is_port_in_use(port):
+            port = port + 1
+            continue
+        break
+
     # START SERVER
     with socketserver.TCPServer(("localhost", port),
                                 MyHTTPRequestHandler) as httpd:
         print("Server started at localhost:" + str(port))
         httpd.serve_forever()
+
 
 if __name__ == "__main__":
     run_qualcmp()
