@@ -61,7 +61,7 @@ def run_qualcmp():
         os.remove(path_to)
     symlink(path_from, path_to)
 
-    # /home/comar/anaconda3/lib/python3.8/site-packages/QualCmp/web
+    # ~/anaconda3/lib/python3.8/site-packages/QualCmp/web
     path = join(dirname(__file__), "web")
 
     # MOVE TO SERVER ROOT
