@@ -70,3 +70,6 @@ def run_qualcmp():
                                 MyHTTPRequestHandler) as httpd:
         print("Server started at localhost:" + str(port))
         httpd.serve_forever()
+
+if __name__ == "__main__":
+    run_qualcmp()
