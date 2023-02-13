@@ -3,8 +3,10 @@ var pane = document.getElementById("pane");
 var btn_next = document.getElementById("btn_next");
 var btn_previous = document.getElementById("btn_previous");
 var btn_export = document.getElementById("btn_export");
+var btn_redraw = document.getElementById("btn_redraw");
 var input_width = document.getElementById("input_width");
 var input_height = document.getElementById("input_height");
+var input_scale = document.getElementById("input_scale");
 var input_idx = document.getElementById("input_idx");
 var input_smooth = document.getElementById("input_smooth");
 var input_autoresize_image = document.getElementById("input_autoresize_image");
@@ -51,16 +53,18 @@ function update_size() {
   for (const key in cnvs) {
     if (cnvs.hasOwnProperty(key)) {
       const cnv = cnvs[key];
-      cnv.width = input_width.value
-      cnv.height = input_height.value
+      cnv.width = Number(input_width.value) * Number(input_scale.value)
+      cnv.height = Number(input_height.value) * Number(input_scale.value)
       let ctx = cnv.getContext('2d');
       trackTransforms(ctx);
       redraw_which(imgs[key], cnv)
     }
   }
 }
+
 input_width.addEventListener("change", update_size)
 input_height.addEventListener("change", update_size)
+input_scale.addEventListener("change", update_size)
 
 function update_image(idx) {
   let i = 0
@@ -130,6 +134,10 @@ btn_export.addEventListener("click", function() {
       downloadImage(dataURL, path);
     }
   }
+})
+
+btn_redraw.addEventListener("click", function() {
+  update_size()
 })
 
 function downloadImage(data, filename = 'untitled.jpeg') {
