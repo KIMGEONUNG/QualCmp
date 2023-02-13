@@ -80,7 +80,7 @@ def run_qualcmp():
     # START SERVER
     with socketserver.TCPServer(("localhost", port),
                                 MyHTTPRequestHandler) as httpd:
-        print("Server started at localhost:" + str(port))
+        print("Server started at https://localhost:" + str(port))
         httpd.serve_forever()
 
 
