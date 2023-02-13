@@ -7,7 +7,8 @@ var input_width = document.getElementById("input_width");
 var input_height = document.getElementById("input_height");
 var input_idx = document.getElementById("input_idx");
 var input_smooth = document.getElementById("input_smooth");
-var input_autoresize = document.getElementById("input_autoresize");
+var input_autoresize_image = document.getElementById("input_autoresize_image");
+var input_autoresize_canvas = document.getElementById("input_autoresize_canvas");
 
 var idx = 0;
 var size = 500;
@@ -29,13 +30,20 @@ input_smooth.addEventListener("change", () => {
   }
 })
 
-// AUTORESIZE ON OFF
-input_autoresize.addEventListener("change", () => {
+// AUTORESIZE(IMAGE) ON OFF
+input_autoresize_image.addEventListener("change", () => {
   for (const key in cnvs) {
     if (cnvs.hasOwnProperty(key)) {
       redraw_which(imgs[key], cnvs[key]);
     }
   }
+})
+
+// AUTORESIZE(CANVAS) ON OFF
+input_autoresize_canvas.addEventListener("change", () => {
+  input_width.value = img_w
+  input_height.value = img_h
+  update_size()
 })
 
 // CHANGE CANVAS SIZE
@@ -68,11 +76,19 @@ function update_image(idx) {
           i = 1
           img_w = img.width
           img_h = img.height
+
+          // AUTO CANVAS RESIZING
+          if (input_autoresize_canvas.checked) {
+            input_width.value = img_w
+            input_height.value = img_h
+            update_size()
+          }
         }
         redraw_which(img, canvas);
       }
     }
   }
+
 }
 
 event_move = (logic) => {
@@ -224,7 +240,7 @@ window.onload = async function() {
 }
 
 function redraw_which(img, cnv) {
-  if (input_autoresize.checked) {
+  if (input_autoresize_image.checked) {
     redraw(img, cnv, img_w, img_h)
   }
   else {
