@@ -3,6 +3,7 @@ var pane = document.getElementById("pane");
 var btn_next = document.getElementById("btn_next");
 var btn_previous = document.getElementById("btn_previous");
 var btn_export = document.getElementById("btn_export");
+var btn_redraw = document.getElementById("btn_redraw");
 var input_width = document.getElementById("input_width");
 var input_height = document.getElementById("input_height");
 var input_scale = document.getElementById("input_scale");
@@ -133,6 +134,10 @@ btn_export.addEventListener("click", function() {
       downloadImage(dataURL, path);
     }
   }
+})
+
+btn_redraw.addEventListener("click", function() {
+  update_size()
 })
 
 function downloadImage(data, filename = 'untitled.jpeg') {
