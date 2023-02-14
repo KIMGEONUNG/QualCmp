@@ -13,15 +13,22 @@ def parse():
     p.add_argument('-p', '--port', type=int, default=8080)
     p.add_argument('-d', '--dir', type=str, required=True)
     p.add_argument('--gen_config', action='store_true')
+    p.add_argument('-f', '--focus_first', action='store_true')
     return p.parse_args()
 
 
-def gen_config(path='srcs'):
+def gen_config(path='srcs', focus_first=False):
     a = {}
     dirs = sorted(glob(join(path, '*')))
-    for d in dirs:
+    files_first = None
+    for i, d in enumerate(dirs):
         files = sorted(glob(join(d, "*")))
-        a[d] = files
+        if i == 0:
+            files_first = files
+        if focus_first:
+            a[d] = files_first
+        else:
+            a[d] = files
     with open("config.json", 'w', encoding='utf-8') as f:
         json.dump(a, f, ensure_ascii=False, indent=4)
 
@@ -50,7 +57,7 @@ def run_qualcmp():
 
     if args.gen_config:
         print('Create config file on %s' % args.dir)
-        gen_config(args.dir)
+        gen_config(args.dir, args.focus_first)
         return 0
 
     # CREATE SYMLINK
@@ -68,7 +75,7 @@ def run_qualcmp():
     chdir(path)
 
     # MAKE CONFIG
-    gen_config()
+    gen_config(focus_first=args.focus_first)
 
     # CHANGE PORT NUMBER IF USED
     for _ in range(100):
