@@ -1,7 +1,7 @@
 import socketserver
 import http.server
 import os
-from os.path import join, dirname, islink
+from os.path import join, dirname, islink, basename
 from os import symlink, getcwd, chdir
 import argparse
 import json
@@ -26,7 +26,7 @@ def gen_config(path='srcs', focus_first=False):
         if i == 0:
             files_first = files
         if focus_first:
-            a[d] = files_first
+            a[d] = [join(d, basename(k)) for k in files_first]
         else:
             a[d] = files
     with open("config.json", 'w', encoding='utf-8') as f:
@@ -40,6 +40,7 @@ def is_port_in_use(port: int) -> bool:
 
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+
     def end_headers(self):
         self.send_my_headers()
         http.server.SimpleHTTPRequestHandler.end_headers(self)
