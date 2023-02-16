@@ -19,7 +19,7 @@ def parse():
 
 def gen_config(path='srcs', focus_first=False):
     a = {}
-    dirs = sorted(glob(join(path, '*')))
+    dirs = sorted(glob(join(path, '*/')))
     files_first = None
     for i, d in enumerate(dirs):
         files = sorted(glob(join(d, "*")))
