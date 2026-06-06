@@ -1,52 +1,86 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Zooming via HTML5 Canvas Context</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QualCmp</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <div class="mydiv fixform">
-    <input type="button" id="btn_previous" value="Previous">
-    <input type="button" id="btn_next" value="Next">
-    <label for="view_idx"> Idx
-      <input type="number" id="input_idx" value=0>
-    </label>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">QC</div>
+        <div>
+          <h1>QualCmp</h1>
+          <p id="status_text">No images loaded</p>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn primary" id="btn_add" type="button">Add Images</button>
+        <button class="btn" id="btn_folder" type="button">Folder</button>
+        <button class="btn danger" id="btn_clear" type="button" disabled>Clear</button>
+      </div>
+    </header>
+
+    <section class="control-band" aria-label="Inspection controls">
+      <div class="control-group transport">
+        <button class="icon-btn" id="btn_previous" type="button" aria-label="Previous frame" disabled>&lt;</button>
+        <label class="field compact" for="input_idx">
+          <span>Frame</span>
+          <input type="number" id="input_idx" value="1" min="1" disabled>
+        </label>
+        <span class="counter" id="frame_count">of 0</span>
+        <button class="icon-btn" id="btn_next" type="button" aria-label="Next frame" disabled>&gt;</button>
+      </div>
+
+      <div class="control-group">
+        <button class="btn" id="btn_fit" type="button" disabled>Fit</button>
+        <button class="btn" id="btn_actual" type="button" disabled>100%</button>
+        <button class="btn" id="btn_export" type="button" disabled>Export</button>
+      </div>
+
+      <div class="control-group settings">
+        <label class="field" for="select_size">
+          <span>Pane</span>
+          <select id="select_size">
+            <option value="adaptive" selected>Adaptive</option>
+            <option value="compact">Compact</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </select>
+        </label>
+
+        <label class="switch">
+          <input type="checkbox" id="input_normalize" checked>
+          <span>Normalize</span>
+        </label>
+
+        <label class="switch">
+          <input type="checkbox" id="input_smooth">
+          <span>Smooth</span>
+        </label>
+      </div>
+    </section>
+
+    <main class="workspace" id="drop_zone">
+      <section class="empty-state" id="empty_state" aria-live="polite">
+        <div class="empty-mark" aria-hidden="true">+</div>
+        <h2>Images</h2>
+        <p>Drop a comparison set here</p>
+      </section>
+
+      <section class="comparison-grid" id="pane" aria-label="Image comparison panes"></section>
+    </main>
+
+    <input class="sr-only" id="file_input" type="file" accept="image/*" multiple>
+    <input class="sr-only" id="folder_input" type="file" accept="image/*" multiple webkitdirectory directory>
   </div>
 
-  <div>
-    <input type="button" id="btn_redraw" value="Redraw">
-    <input type="button" id="btn_export" value="Export">
-  </div>
-
-  <div class="mydiv">
-    <label for="input_width"> Width
-      <input type="number" id="input_width" value=512>
-    </label>
-    <label for="input_height"> Hight
-      <input type="number" id="input_height" value=512>
-    </label>
-    <label for="input_scale"> Scale
-      <input type="number" step="0.1" id="input_scale" value=1.0>
-    </label>
-  </div>
-
-  <div>
-    <label for="choice_smooth"> Smooth
-      <input type="checkbox" id="input_smooth">
-    </label>
-    <label for="input_autoresize_image"> Image auto-resize
-      <input type="checkbox" id="input_autoresize_image" checked=True>
-    </label>
-    <label for="input_autoresize_canvas"> Canvas auto-resize
-      <input type="checkbox" id="input_autoresize_canvas">
-    </label>
-  </div>
-  <div id="pane" style="display: inline-flex; flex-wrap:wrap">
-  </div>
-  <script src="script.js"> </script>
+  <script src="script.js"></script>
 </body>
 
 </html>

@@ -1,23 +1,23 @@
-import socketserver
-import http.server
 import os
-from os.path import join, dirname, islink, basename
-from os import symlink, getcwd, chdir
 import argparse
+import http.server
 import json
+import socketserver
 from glob import glob
+from os import chdir, getcwd, symlink
+from os.path import basename, dirname, islink, join
 
 
 def parse():
     p = argparse.ArgumentParser()
     p.add_argument('-p', '--port', type=int, default=8080)
-    p.add_argument('-d', '--dir', type=str, required=True)
+    p.add_argument('-d', '--dir', type=str, default=None)
     p.add_argument('--gen_config', action='store_true')
     p.add_argument('-f', '--focus_first', action='store_true')
     return p.parse_args()
 
 
-def gen_config(path='srcs', focus_first=False):
+def gen_config(path='srcs', focus_first=False, output_path='config.json'):
     a = {}
     dirs = sorted(glob(join(path, '*/')))
     files_first = None
@@ -29,7 +29,7 @@ def gen_config(path='srcs', focus_first=False):
             a[d] = [join(d, basename(k)) for k in files_first]
         else:
             a[d] = files
-    with open("config.json", 'w', encoding='utf-8') as f:
+    with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(a, f, ensure_ascii=False, indent=4)
 
 
@@ -52,31 +52,51 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Expires", "0")
 
 
+class ReusableTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
+
+
+def remove_generated_runtime_files(web_root):
+    config_path = join(web_root, "config.json")
+    srcs_path = join(web_root, "srcs")
+
+    if os.path.exists(config_path):
+        os.remove(config_path)
+    if islink(srcs_path):
+        os.remove(srcs_path)
+
+
 def run_qualcmp():
     args = parse()
     port = args.port
+    web_root = join(dirname(__file__), "web")
 
     if args.gen_config:
+        if not args.dir:
+            raise SystemExit("--gen_config requires --dir")
         print('Create config file on %s' % args.dir)
         gen_config(args.dir, args.focus_first)
         return 0
 
-    # CREATE SYMLINK
-    path_from = join(getcwd(), args.dir)
-    path_to = join(dirname(__file__), "web", "srcs")
+    if args.dir:
+        # CREATE SYMLINK
+        path_from = join(getcwd(), args.dir)
+        path_to = join(web_root, "srcs")
 
-    if islink(path_to):
-        os.remove(path_to)
-    symlink(path_from, path_to)
-
-    # ~/anaconda3/lib/python3.8/site-packages/QualCmp/web
-    path = join(dirname(__file__), "web")
+        if islink(path_to):
+            os.remove(path_to)
+        elif os.path.exists(path_to):
+            raise RuntimeError("%s exists and is not a symlink" % path_to)
+        symlink(path_from, path_to)
+    else:
+        remove_generated_runtime_files(web_root)
 
     # MOVE TO SERVER ROOT
-    chdir(path)
+    chdir(web_root)
 
-    # MAKE CONFIG
-    gen_config(focus_first=args.focus_first)
+    if args.dir:
+        # MAKE CONFIG
+        gen_config(focus_first=args.focus_first)
 
     # CHANGE PORT NUMBER IF USED
     for _ in range(100):
@@ -86,8 +106,8 @@ def run_qualcmp():
         break
 
     # START SERVER
-    with socketserver.TCPServer(("localhost", port),
-                                MyHTTPRequestHandler) as httpd:
+    with ReusableTCPServer(("localhost", port),
+                           MyHTTPRequestHandler) as httpd:
         print("Server started at http://localhost:" + str(port))
         httpd.serve_forever()
 
